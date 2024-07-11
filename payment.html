@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Payment Page</title>
+    
+ <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.product-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-image-container {
+  width: 30%;
+}
+
+.product-info-container {
+  width: 70%;
+  padding-left: 20px;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+label, input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+}
+
+label {
+  width: 30%;
+  padding-right: 10px;
+}
+input[type="text"] {
+  width: 70%;
+}
+
+input[type="button"] {
+  background-color: #ff5722;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+}
+
+input[type="text"][name="card-number"], input[type="text"][name="expiry-date"], input[type="text"][name="cvv"] {
+  width: 30%;
+}
+
+
+h1 {
+  margin-top: 0;
+}
+
+.price {
+  color: #ff5722;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.btn{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: pink;
+  font-size: 20px;
+  color: white;
+  padding: 10px 30px;
+  cursor: pointer;
+}
+#box{
+  width: 600px;
+  overflow: hidden;
+  background: #fbd9ec;
+  box-shadow: 0 0 10px black;
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  padding: 100px;
+  text-align: center;
+  display: none;
+}
+#box span{
+  color: #d0d077;
+  font-size: 40px;
+  display: block;
+  margin: 20px 0;
+}
+#box h1{
+  color: brown
+}
+.close{
+  font-size: 18px;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-image: linear-gradient(#fe667d, #ffa375);
+  display: inline-block;
+  border-radius: 1px solid #000;
+
+}
+
+ </style>
+  </head>
+  <body>
+    <div class="product-container">
+      <div class="product-image-container">
+        <img src="images/logo.jpg" alt="MyProgrammingBook">
+      </div>
+      <div class="product-info-container">
+        <h1>Payment Gateway </h1>
+        <p class="price">*Only Debit Card Acceptable</p>
+        <p class="product-description">
+          Due to some technical issues we are not accepting any other type of payments such as cash on delivery(COD),UPI,Net Banking etc.
+          
+        </p>
+        <p>*Terms and Conditions Apply</p>
+      </div>
+      <form>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required autocomplete="off">
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required autocomplete="off">
+        <div class="card-info">
+          <label for="card-number">Card Number:</label>
+          <input type="text" id="card-number" name="card-number" required autocomplete="off">
+        </div>
+        <div class="card-info">
+          <label for="expiry-date">Expiry Date:</label>
+          <input type="text" id="expiry-date" name="expiry-date" required autocomplete="off">
+          <label for="cvv">CVV:</label>
+          <input type="text" id="cvv" name="cvv" required autocomplete="off">
+        </div>
+        <input type="button" value="Buy Now" onclick="pop()">
+
+
+
+  
+
+  <div id="box">
+    <i class="fas fa-check-circle"></i> 
+
+    <h1>PAYMENT SUCCESSFULL</h1> 
+
+    <a class="close" onclick="pop()">Close Box</a>
+
+  </div>
+
+
+</form>
+    </div>
+
+    <script> // Get references to the form elements
+const form = document.getElementById("payment-form");
+const cardNumber = document.getElementById("card-number");
+const expiryDate = document.getElementById("expiry-date");
+const cvv = document.getElementById("cvv");
+const submitButton = document.getElementById("submit-button");
+
+// Handle form submission
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  // Disable the submit button to prevent multiple submissions
+  submitButton.disabled = true;
+
+  // Create an object to hold the form data
+  const formData = {
+    cardNumber: cardNumber.value,
+    expiryDate: expiryDate.value,
+    cvv: cvv.value,
+  };
+
+  // Perform client-side validation on the form data
+  if (!validateFormData(formData)) {
+    // If the data is invalid, re-enable the submit button and return
+    submitButton.disabled = false;
+    return;
+  }
+
+  // Send the form data to the server
+  // The following is just an example and should not be used in a real-world scenario
+  // as it lacks security measures and proper payment gateway integration
+  fetch("/charge", {
+    method: "POST",
+    body: JSON.stringify(formData),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the server response
+      if (data.success) {
+        // Payment was successful
+        alert("Payment successful!");
+      } else {
+        // Payment failed
+        alert("Payment failed. Please try again.");
+        submitButton.disabled = false;
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      alert("An error occurred. Please try again.");
+      submitButton.disabled = false;
+    });
+});
+
+function validateFormData(data) {
+  // Example validation checks
+  if (!data.cardNumber || data.cardNumber.length !== 16) {
+    alert("Please enter a valid card number.");
+    return false;
+  }
+  if (!data.expiryDate || data.expiryDate.length !== 5) {
+    alert("Please enter a valid expiry date in the format MM/YY.");
+    return false;
+  }
+  if (!data.cvv || data.cvv.length !== 3) {
+    alert("Please enter a valid CVV.");
+    return false;
+  }
+  return true;
+}
+
+var modal = null
+ function pop() {
+   if(modal === null) {
+     document.getElementById("box").style.display = "block";
+     modal = true
+   } else {
+     document.getElementById("box").style.display = "none";
+     modal = null
+   }
+ }
+
+</script>
+  </body>
+</html>
